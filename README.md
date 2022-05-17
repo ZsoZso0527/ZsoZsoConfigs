@@ -4,3 +4,6 @@
 ### Feel free to send config suggestions on [discord](https://discord.gg/ZsoZso)
 ### ***Only rule is to give credit to me when using them.*** <3
 # DISCORD: [discord.gg/ZsoZso](https://discord.gg/ZsoZso)
+# Config List:
+MesterMC  
+VanityEmpire  
